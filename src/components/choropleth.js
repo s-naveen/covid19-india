@@ -45,7 +45,7 @@ function ChoroplethMap(props) {
     const unemployment = d3.map();
 
     const projection = d3.geoMercator()
-        .center([81.9629, 22])
+        .center([window.innerWidth<=769 ? 81.9629 : 78.9629, 22])
         .scale(window.innerWidth<=769 ? 600 : 900)
         .translate([width/2, height/2]);
 
