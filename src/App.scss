@@ -459,26 +459,17 @@ table {
       padding: 0.5rem;
       cursor: pointer;
       border-radius: 5px;
-      transition: all 0.1s ease-in-out;
-      &:hover {
-        background: $gray-hover;
-      }
       .heading-content {
         display: flex;
-        justify-content: space-between;
-        position: relative;
-        flex-direction: row;
-        height: 0.9rem;
-        svg {
-          width: 10px;
-          margin: 0;
-          right: 0;
-          transform: rotate(135deg);
-          stroke-width: 4px;
-          align-self: center;
-          margin-top: -0.35rem;
-          margin-left: 0.25rem;
-          color: $gray-mid;
+        justify-content: flex-start;
+        .sort-black {
+          display: block;
+          background-image: url('/sort-black.png');
+          background-repeat: no-repeat;
+          background-size: 13px;
+          width: 16px;
+          height: 16px;
+          margin-left: 6px;
         }
       }
     }
