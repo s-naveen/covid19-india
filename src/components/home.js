@@ -6,7 +6,7 @@ import {formatDistance} from 'date-fns';
 import Table from './table';
 import Level from './level';
 import ChoroplethMap from './choropleth';
-import TimeSeries from './timeseries';
+import Charts from './charts';
 import Minigraph from './minigraph';
 import Banner from './banner';
 
@@ -91,7 +91,7 @@ function Home(props) {
 
         </div>
 
-        <TimeSeries timeseries={timeseries} type={graphOption} mode={timeseriesMode}/>
+        <Charts graphOption={graphOption} mode={timeseriesMode} timeseries={timeseries} />
 
       </div>
     </div>
