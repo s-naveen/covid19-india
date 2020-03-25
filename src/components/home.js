@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import * as Icon from 'react-feather';
 import axios from 'axios';
+import {format, zonedTimeToUtc} from 'date-fns-tz';
 import {formatDistance} from 'date-fns';
 
 import Table from './table';
@@ -14,7 +14,9 @@ function Home(props) {
   const [fetched, setFetched] = useState(false);
   const [graphOption, setGraphOption] = useState(1);
   const [lastUpdated, setLastUpdated] = useState('');
+  const [timeseries, setTimeseries] = useState([]);
   const [deltas, setDeltas] = useState([]);
+  const [timeseriesMode, setTimeseriesMode] = useState(true);
 
   useEffect(()=> {
     if (fetched===false) {
@@ -26,6 +28,7 @@ function Home(props) {
     axios.get('https://api.covid19india.org/data.json')
         .then((response)=>{
           setStates(response.data.statewise);
+          setTimeseries(response.data.cases_time_series);
           setLastUpdated(response.data.statewise[0].lastupdatedtime.slice(0, 15)+response.data.statewise[0].lastupdatedtime.slice(18));
           setDeltas(response.data.key_values[0]);
           setFetched(true);
@@ -38,51 +41,56 @@ function Home(props) {
   return (
     <div className="Home">
 
-      <div className="header fadeInUp" style={{animationDelay: '0.5s'}}>
-        <h1>India COVID-19 Tracker</h1>
-        <div className="header-mid">
-          <button onClick={()=>{
-            window.location.replace('https://bit.ly/covid19indiapatientdb_echo');
-          }}><Icon.Database /><span>Live Patient Database</span></button>
-          <div className="last-update">
-            <h6>Last Reported Case</h6>
-            <h3>{lastUpdated.length===0 ? '' : formatDistance(new Date(lastUpdated), new Date())+' Ago'}</h3>
+      <div className="home-left">
+
+        <div className="header fadeInUp" style={{animationDelay: '0.5s'}}>
+          <div className="header-mid">
+            <h1>India COVID-19 Tracker</h1>
+            <div className="last-update">
+              <h6>Last Reported Case</h6>
+              <h3>{lastUpdated.length===0 ? '' : formatDistance(zonedTimeToUtc(new Date(lastUpdated), 'Asia/Calcutta'), zonedTimeToUtc(new Date()))+' Ago'}</h3>
+            </div>
           </div>
         </div>
 
-        <button onClick={()=>{
-          window.location.replace('https://t.me/covid19indiaops');
-        }}className="is-purple telegram">
-          <Icon.MessageCircle />
-          <span>Join Telegram to Collaborate!</span>
-        </button>
+        <Level data={states} deltas={deltas}/>
+        <Minigraph timeseries={timeseries} animate={true}/>
+
+        <Table states={states} summary={false}/>
 
       </div>
 
-      <Level data={states} deltas={deltas}/>
-      <Minigraph states={states} animate={true}/>
+      <div className="home-right">
 
-      <Table states={states} summary={false}/>
+        <ChoroplethMap states={states}/>
 
-      <ChoroplethMap states={states}/>
-
-      <div className="timeseries-header">
-        <h1>Spread Trends</h1>
-        <div className="tabs">
-          <div className={`tab ${graphOption===1 ? 'focused' : ''}`} onClick={()=>{
-            setGraphOption(1);
-          }}>
-            <h4>Cumulative</h4>
+        <div className="timeseries-header fadeInUp" style={{animationDelay: '1.5s'}}>
+          <h1>Spread Trends</h1>
+          <div className="tabs">
+            <div className={`tab ${graphOption===1 ? 'focused' : ''}`} onClick={()=>{
+              setGraphOption(1);
+            }}>
+              <h4>Cumulative</h4>
+            </div>
+            <div className={`tab ${graphOption===2 ? 'focused' : ''}`} onClick={()=>{
+              setGraphOption(2);
+            }}>
+              <h4>Daily</h4>
+            </div>
           </div>
-          <div className={`tab ${graphOption===2 ? 'focused' : ''}`} onClick={()=>{
-            setGraphOption(2);
-          }}>
-            <h4>Daily</h4>
+
+          <div className="timeseries-mode">
+            <label htmlFor="timeseries-mode">Scale Uniformly</label>
+            <input type="checkbox" checked={timeseriesMode} onChange={(event)=>{
+              setTimeseriesMode(!timeseriesMode);
+            }}/>
           </div>
+
         </div>
-      </div>
 
-      <TimeSeries states={states} type={graphOption}/>
+        <TimeSeries timeseries={timeseries} type={graphOption} mode={timeseriesMode}/>
+
+      </div>
     </div>
   );
 }
