@@ -12,18 +12,6 @@ function ChoroplethMap(props) {
   const choroplethMap = useRef(null);
 
   useEffect(()=>{
-    if (props.stateHighlighted === null) {
-      setState(states[1]);
-      setIndex(1);
-    } else {
-      if (props.stateHighlighted !== undefined) {
-        setState(props.stateHighlighted.state);
-        setIndex(props.stateHighlighted.index);
-      }
-    }
-  }, [props.stateHighlighted])
-
-  useEffect(()=>{
     if (props.states.length>1 && choroplethMap.current) {
       mapData(choroplethMap.current);
       setState(states[1]);
@@ -94,7 +82,7 @@ function ChoroplethMap(props) {
 
     svg.append('g')
         .attr('class', 'legendLinear')
-        .attr('transform', 'translate(1, 450)');
+        .attr('transform', 'translate(1, 375)');
 
     const numCells = 6;
     const delta = Math.floor(statistic.maxConfirmed / (numCells - 1));
@@ -132,7 +120,7 @@ function ChoroplethMap(props) {
           .attr('fill', function(d) {
             const n = unemployment.get(d.properties.ST_NM.toLowerCase());
             const color = (n == 0) ? '#ffffff' : d3.interpolateReds(maxInterpolation * n/statistic.maxConfirmed);
-            return color;
+            return color
           })
           .attr('d', path)
           .attr('pointer-events', 'all')
@@ -180,35 +168,37 @@ function ChoroplethMap(props) {
       <div className="map-stats">
         <h4>{state.state}</h4>
 
-        <div className="stats">
-          <h5>Confirmed</h5>
-          <div className="stats-bottom">
-            <h1>{state.confirmed}</h1>
-            <h6>{}</h6>
+        <div className="stats-container" >
+          <div className="stats">
+            <h5>Confirmed</h5>
+            <div className="stats-bottom">
+              <h1>{state.confirmed}</h1>
+              <h6>{}</h6>
+            </div>
           </div>
-        </div>
 
-        <div className="stats is-blue">
-          <h5>Active</h5>
-          <div className="stats-bottom">
-            <h1>{state.active}</h1>
-            <h6>{}</h6>
+          <div className="stats is-blue">
+            <h5>Active</h5>
+            <div className="stats-bottom">
+              <h1>{state.active}</h1>
+              <h6>{}</h6>
+            </div>
           </div>
-        </div>
 
-        <div className="stats is-green">
-          <h5>Recovered</h5>
-          <div className="stats-bottom">
-            <h1>{state.recovered}</h1>
-            <h6>{}</h6>
+          <div className="stats is-green">
+            <h5>Recovered</h5>
+            <div className="stats-bottom">
+              <h1>{state.recovered}</h1>
+              <h6>{}</h6>
+            </div>
           </div>
-        </div>
 
-        <div className="stats is-gray">
-          <h5>Deceased</h5>
-          <div className="stats-bottom">
-            <h1>{state.deaths}</h1>
-            <h6>{}</h6>
+          <div className="stats is-gray">
+            <h5>Deceased</h5>
+            <div className="stats-bottom">
+              <h1>{state.deaths}</h1>
+              <h6>{}</h6>
+            </div>
           </div>
         </div>
 
